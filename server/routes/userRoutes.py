@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List
 
 from server.config.db import get_db
-from server.controllers.userController import SignupRequest, UserResponse
+from server.controllers.userController import SignupRequest, LoginRequest, UserResponse
 from server.services import userService
 
 router = APIRouter(prefix="/api/users", tags=["users"])
@@ -27,6 +27,12 @@ def signup(payload: SignupRequest, db: Session = Depends(get_db)):
         password=payload.password,
         confirm_password=payload.confirm_password,
     )
+
+
+@router.post("/login", response_model=UserResponse)
+def login(payload: LoginRequest, db: Session = Depends(get_db)):
+    """Authenticate a user by email and password."""
+    return userService.login(db, email=payload.email, password=payload.password)
 
 
 @router.patch("/{user_id}/deactivate", response_model=UserResponse)

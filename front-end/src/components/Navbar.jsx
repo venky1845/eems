@@ -1,11 +1,32 @@
+import { useState, useRef, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
 export default function Navbar() {
-  const { currentUser } = useAuth()
+  const { currentUser, logout } = useAuth()
+  const navigate = useNavigate()
+  const [dropdownOpen, setDropdownOpen] = useState(false)
+  const dropdownRef = useRef(null)
 
   const initials = currentUser?.full_name
     ? currentUser.full_name.slice(0, 2).toUpperCase()
     : 'U'
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => document.removeEventListener('mousedown', handleClickOutside)
+  }, [])
+
+  const handleLogout = () => {
+    logout()
+    navigate('/login')
+  }
 
   return (
     <nav className="navbar">
@@ -31,12 +52,52 @@ export default function Navbar() {
         <span className="navbar-tab">Company A</span>
       </div>
 
-      {/* Right side */}
-      <div className="navbar-right">
-        <div className="navbar-avatar">{initials}</div>
-        <span className="navbar-user-name">
-          {currentUser?.full_name ?? 'Guest'}
-        </span>
+      {/* Right side — profile + dropdown */}
+      <div className="navbar-right" ref={dropdownRef}>
+        <div
+          className="navbar-profile-btn"
+          onClick={() => setDropdownOpen((o) => !o)}
+          role="button"
+          tabIndex={0}
+          onKeyDown={(e) => e.key === 'Enter' && setDropdownOpen((o) => !o)}
+        >
+          <div className="navbar-avatar">{initials}</div>
+          <span className="navbar-user-name">
+            {currentUser?.full_name ?? 'Guest'}
+          </span>
+          <svg
+            className={`navbar-chevron${dropdownOpen ? ' open' : ''}`}
+            width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+          >
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </div>
+
+        {dropdownOpen && (
+          <div className="navbar-dropdown">
+            <div className="navbar-dropdown-header">
+              <div className="navbar-dropdown-avatar">{initials}</div>
+              <div>
+                <div className="navbar-dropdown-name">{currentUser?.full_name}</div>
+                <div className="navbar-dropdown-email">{currentUser?.email}</div>
+                <span className="role-chip" style={{ marginTop: '4px', display: 'inline-block' }}>
+                  {currentUser?.role}
+                </span>
+              </div>
+            </div>
+            <div className="navbar-dropdown-divider" />
+            <button className="navbar-dropdown-logout" onClick={handleLogout}>
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                <polyline points="16 17 21 12 16 7" />
+                <line x1="21" y1="12" x2="9" y2="12" />
+              </svg>
+              Logout
+            </button>
+          </div>
+        )}
       </div>
     </nav>
   )
