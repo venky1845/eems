@@ -1,5 +1,5 @@
-import Navbar from '../components/Navbar'
-import MemberList from '../components/MemberList'
+import Navbar from '../../components/Navbar'
+import MemberList from '../../components/MemberList'
 
 export default function MembersPage() {
   return (

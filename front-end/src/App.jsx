@@ -1,27 +1,20 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
-import SignupPage  from './pages/SignupPage'
-import LoginPage   from './pages/LoginPage'
-import MembersPage from './pages/MembersPage'
 
-/** Redirect already-logged-in users away from auth pages */
+import Login          from './pages/auth/LoginPage'
+import Signup         from './pages/auth/SignupPage'
+import ForgotPassword from './pages/auth/ForgotPassword'
+import ResetPassword  from './pages/auth/ResetPassword'
+import MembersPage    from './pages/members/MembersPage'
+
 function GuestRoute({ children }) {
   const { currentUser } = useAuth()
   return currentUser ? <Navigate to="/members" replace /> : children
 }
 
-/** Require login — redirect to /login if not authenticated */
-function PrivateRoute({ children, requiredRole }) {
+function PrivateRoute({ children }) {
   const { currentUser } = useAuth()
-
-  if (!currentUser) return <Navigate to="/login" replace />
-
-  // Role-based: if a specific role is required, check it
-  if (requiredRole && currentUser.role !== requiredRole) {
-    return <Navigate to="/members" replace />
-  }
-
-  return children
+  return currentUser ? children : <Navigate to="/login" replace />
 }
 
 export default function App() {
@@ -29,21 +22,12 @@ export default function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          {/* Auth pages — skip if already logged in */}
-          <Route path="/signup" element={
-            <GuestRoute><SignupPage /></GuestRoute>
-          } />
-          <Route path="/login" element={
-            <GuestRoute><LoginPage /></GuestRoute>
-          } />
-
-          {/* Protected pages */}
-          <Route path="/members" element={
-            <PrivateRoute><MembersPage /></PrivateRoute>
-          } />
-
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/login" replace />} />
+          <Route path="/login"            element={<GuestRoute><Login /></GuestRoute>} />
+          <Route path="/signup"           element={<GuestRoute><Signup /></GuestRoute>} />
+          <Route path="/forgot-password"  element={<GuestRoute><ForgotPassword /></GuestRoute>} />
+          <Route path="/reset-password"   element={<GuestRoute><ResetPassword /></GuestRoute>} />
+          <Route path="/members"          element={<PrivateRoute><MembersPage /></PrivateRoute>} />
+          <Route path="*"                 element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

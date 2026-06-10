@@ -28,11 +28,15 @@ export default function LoginForm() {
       login(user);
       navigate("/members");
     } catch (err) {
-      const backendError = err.response?.data;
-      if (typeof backendError?.detail === "string") {
-        setError(backendError.detail);
+      const detail = err.response?.data?.detail
+      if (detail === 'ACCOUNT_DEACTIVATED') {
+        navigate('/deactivated')
+        return
+      }
+      if (typeof detail === 'string') {
+        setError(detail)
       } else {
-        setError("Invalid email or password.");
+        setError('Invalid email or password.')
       }
     } finally {
       setLoading(false);
@@ -80,7 +84,10 @@ export default function LoginForm() {
 
           {/* Password */}
           <div className="form-group">
-            <label>Password</label>
+            <div className="form-label-row">
+              <label>Password</label>
+              <a href="/forgot-password" className="forgot-link">Forgot password?</a>
+            </div>
             <div className="input-wrap">
               <span className="input-icon">
                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none"

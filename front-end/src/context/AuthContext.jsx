@@ -1,9 +1,8 @@
 import { createContext, useContext, useState } from 'react'
 
-const AuthContext = createContext(null)
+export const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  // Persisted to sessionStorage so a page refresh keeps the session
   const [currentUser, setCurrentUser] = useState(() => {
     try {
       const stored = sessionStorage.getItem('eems_user')
@@ -28,4 +27,5 @@ export function AuthProvider({ children }) {
   )
 }
 
+// kept for backward compat — components that already import useAuth from here still work
 export const useAuth = () => useContext(AuthContext)

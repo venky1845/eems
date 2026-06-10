@@ -46,7 +46,7 @@ def login(db: Session, email: str, password: str):
         raise HTTPException(status_code=401, detail="Invalid email or password.")
 
     if user.status == "Inactive":
-        raise HTTPException(status_code=403, detail="Your account has been deactivated. Please contact an administrator.")
+        raise HTTPException(status_code=403, detail="ACCOUNT_DEACTIVATED")
 
     return user
 

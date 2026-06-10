@@ -65,6 +65,26 @@ body {
   margin-bottom: 6px;
 }
 
+.form-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 6px;
+}
+
+.form-label-row label {
+  margin-bottom: 0;
+}
+
+.forgot-link {
+  font-size: 12px;
+  font-weight: 500;
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.forgot-link:hover { text-decoration: underline; }
+
 .input-wrap {
   position: relative;
   display: flex;
@@ -164,6 +184,16 @@ body {
   background: #fef2f2;
   border: 1px solid #fecaca;
   color: #dc2626;
+  padding: 9px 12px;
+  border-radius: 7px;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+
+.success-msg {
+  background: #f0fdf4;
+  border: 1px solid #bbf7d0;
+  color: #16a34a;
   padding: 9px 12px;
   border-radius: 7px;
   font-size: 13px;
@@ -297,7 +327,6 @@ body {
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Dropdown — user info section */
 .navbar-dropdown-header {
   display: flex;
   align-items: flex-start;
@@ -340,7 +369,6 @@ body {
   margin: 0;
 }
 
-/* Dropdown — logout button */
 .navbar-dropdown-logout {
   display: flex;
   align-items: center;
