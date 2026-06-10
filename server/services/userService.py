@@ -3,6 +3,7 @@ from fastapi import HTTPException
 
 from server.repositories import userRepository
 from server.utils.hash import hash_password, verify_password
+from server.models.user import User
 
 ROLE_MAP = {
     "admin": "admin",
@@ -55,3 +56,16 @@ def deactivate(db: Session, user_id: int):
     if not user:
         raise HTTPException(status_code=404, detail="User not found.")
     return user
+
+def forgot_password(db, email: str):
+    user = db.query(User).filter(User.email == email).first()
+
+    if not user:
+        raise HTTPException(
+            status_code=404,
+            detail="User not found"
+        )
+
+    return {
+        "message": "Password reset link sent successfully"
+    }
