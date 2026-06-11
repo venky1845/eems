@@ -7,7 +7,8 @@ from server.controllers.userController import (
     SignupRequest,
     LoginRequest,
     UserResponse,
-    ForgotPasswordRequest
+    ForgotPasswordRequest,
+    ResetPasswordRequest,
 )
 from server.services import userService
 
@@ -23,12 +24,12 @@ def list_users(db: Session = Depends(get_db)):
 def signup(payload: SignupRequest, db: Session = Depends(get_db)):
     return userService.register(
         db,
-        full_name=payload.full_name,
-        email=payload.email,
-        company=payload.company,
-        account_role=payload.account_role,
-        password=payload.password,
-        confirm_password=payload.confirm_password,
+        full_name        = payload.full_name,
+        email            = payload.email,
+        company          = payload.company,
+        account_role     = payload.account_role,
+        password         = payload.password,
+        confirm_password = payload.confirm_password,
     )
 
 
@@ -36,20 +37,25 @@ def signup(payload: SignupRequest, db: Session = Depends(get_db)):
 def login(payload: LoginRequest, db: Session = Depends(get_db)):
     return userService.login(
         db,
-        email=payload.email,
-        password=payload.password
+        email    = payload.email,
+        password = payload.password,
     )
 
 
 @router.post("/forgot-password")
 def forgot_password(
     payload: ForgotPasswordRequest,
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
-    return userService.forgot_password(
-        db,
-        email=payload.email
-    )
+    return userService.forgot_password(db, email=payload.email)
+
+
+@router.post("/reset-password")
+def reset_password(
+    payload: ResetPasswordRequest,
+    db: Session = Depends(get_db),
+):
+    return userService.reset_password(db, token=payload.token, new_password=payload.new_password)
 
 
 @router.patch("/{user_id}/deactivate", response_model=UserResponse)
